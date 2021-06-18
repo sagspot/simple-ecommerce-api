@@ -1,0 +1,31 @@
+{
+  "name": "simple-ecommerce-api",
+  "version": "1.0.0",
+  "description": "Simple E-Commerce API for an ecommerce website",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sagspot/simple-ecommerce-api.git"
+  },
+  "keywords": [
+    "E-Commerce",
+    "E-commerce-solution"
+  ],
+  "author": "Oliver Sagala",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "joi": "^17.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.12.14",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
