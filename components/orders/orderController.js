@@ -5,7 +5,7 @@ const validate = require('../middlewares/validation');
 
 module.exports.orders_get_all = async (req, res) => {
   try {
-    const orders = await Order.find();
+    const orders = await Order.find().populate('product', 'name price');
     res.status(200).send(orders);
   } catch (err) {
     res.status(500).send(err);
@@ -40,7 +40,7 @@ module.exports.orders_get_order = async (req, res) => {
   const validateObjectId = await mongoose.isValidObjectId(id);
   if (!validateObjectId) res.status(404).send('Invalid ID');
 
-  const order = await Order.findById(id);
+  const order = await Order.findById(id).populate('product');
   if (!order) return res.status(404).send('Order not found');
 
   try {
