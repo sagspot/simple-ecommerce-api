@@ -19,3 +19,21 @@ module.exports.loginValidation = (data) => {
 
   return schema.validate(data);
 };
+
+module.exports.createProductValidation = (data) => {
+  const schema = Joi.object({
+    name: Joi.string().required(),
+    price: Joi.number().required(),
+  });
+
+  return schema.validate(data);
+};
+
+module.exports.updateProductValidation = (data) => {
+  const schema = Joi.object({
+    name: Joi.string(),
+    price: Joi.number(),
+  });
+
+  return schema.validate(data);
+};
