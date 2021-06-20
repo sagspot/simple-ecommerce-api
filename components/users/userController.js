@@ -67,7 +67,7 @@ module.exports.users_delete = async (req, res) => {
   const user = await User.findOne({ _id: req.userData.id });
   try {
     const removeUser = await user.remove();
-    res.status(200).send('User deleted');
+    res.status(204).send('User deleted');
   } catch (err) {
     res.status(400).send(err);
   }

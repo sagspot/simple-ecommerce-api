@@ -37,3 +37,20 @@ module.exports.updateProductValidation = (data) => {
 
   return schema.validate(data);
 };
+
+module.exports.createOrderValidation = (data) => {
+  const schema = Joi.object({
+    product: Joi.required(),
+    quantity: Joi.number(),
+  });
+
+  return schema.validate(data);
+};
+
+module.exports.updateOrderValidation = (data) => {
+  const schema = Joi.object({
+    quantity: Joi.number().required(),
+  });
+
+  return schema.validate(data);
+};

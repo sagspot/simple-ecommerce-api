@@ -22,7 +22,7 @@ module.exports.products_post_create = async (req, res) => {
 
   try {
     const savedProduct = await newProduct.save();
-    res.status(201).json({ savedProduct });
+    res.status(201).json({ product: savedProduct });
   } catch (err) {
     res.status(500).send(err);
   }
@@ -30,9 +30,13 @@ module.exports.products_post_create = async (req, res) => {
 
 module.exports.products_get_product = async (req, res) => {
   const id = req.params.productId;
+  const validateObjectId = await mongoose.isValidObjectId(id);
+  if (!validateObjectId) return res.status(404).send('Invalid ID');
+
+  const product = await Product.findById(id);
+  if (!product) return res.status(404).send('Product not found');
+
   try {
-    const validateObjectId = await mongoose.isValidObjectId(id);
-    const product = await Product.findById(id);
     res.status(200).send(product);
   } catch (err) {
     res.status(404).send(err);
@@ -45,9 +49,13 @@ module.exports.products_patch_product = async (req, res) => {
 
   const id = req.params.productId;
 
+  const validateObjectId = await mongoose.isValidObjectId(id);
+  if (!validateObjectId) return res.status(404).send('Invalid ID');
+
+  const product = await Product.findById(id);
+  if (!product) return res.status(404).send('Product not found');
+
   try {
-    const validateObjectId = await mongoose.isValidObjectId(id);
-    const product = await Product.findById(id);
     const updateProduct = await Product.update(
       { _id: id },
       {
@@ -57,7 +65,7 @@ module.exports.products_patch_product = async (req, res) => {
         },
       }
     );
-    res.status(200).json({ message: 'Product update', updateProduct });
+    res.status(200).json({ message: 'Product updated', updateProduct });
   } catch (err) {
     res.status(404).send(err);
   }
@@ -65,9 +73,14 @@ module.exports.products_patch_product = async (req, res) => {
 
 module.exports.products_delete_product = async (req, res) => {
   const id = req.params.productId;
+  const validateObjectId = await mongoose.isValidObjectId(id);
+  if (!validateObjectId) return res.status(404).send('Invalid ID');
+
+  const product = await Product.findById(id);
+  if (!product) return res.status(404).send('Product not found');
+
   try {
-    const validateObjectId = await mongoose.isValidObjectId(id);
-    const removeProduct = await Product.findById(id).remove();
+    await Product.findById(id).remove();
     res.status(204).send('Product deleted');
   } catch (err) {
     res.status(404).send(err);
