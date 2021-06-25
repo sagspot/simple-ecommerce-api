@@ -4,7 +4,11 @@
   "description": "Simple E-Commerce API for an ecommerce website",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index"
+    "start": "node index",
+    "dev": "nodemon index"
+  },
+  "engines": {
+    "node": "14.17.0"
   },
   "repository": {
     "type": "git",
