@@ -35,14 +35,14 @@ export const orders_post_create = async (req, res) => {
     const savedOrder = await newOrder.save();
     res.status(201).send(savedOrder);
   } catch (err) {
-    res.status(404).send(err);
+    res.status(500).send(err);
   }
 };
 
 export const orders_get_order = async (req, res) => {
   const id = req.params.orderId;
   const validateObjectId = await mongoose.isValidObjectId(id);
-  if (!validateObjectId) res.status(404).send('Invalid ID');
+  if (!validateObjectId) res.status(400).send('Invalid ID');
 
   const order = await Order.findById(id).populate('product');
   if (!order) return res.status(404).send('Order not found');
@@ -50,7 +50,7 @@ export const orders_get_order = async (req, res) => {
   try {
     res.status(200).send(order);
   } catch (err) {
-    res.status(404).send(err);
+    res.status(500).send(err);
   }
 };
 
@@ -60,7 +60,7 @@ export const orders_patch_order = async (req, res) => {
 
   const id = req.params.orderId;
   const validateObjectId = await mongoose.isValidObjectId(id);
-  if (!validateObjectId) return res.status(404).send('Invalid ID');
+  if (!validateObjectId) return res.status(400).send('Invalid ID');
 
   const orderExist = await Order.findById(id);
   if (!orderExist) return res.status(404).send('Order not found');
@@ -76,22 +76,22 @@ export const orders_patch_order = async (req, res) => {
     );
     res.status(200).json({ message: 'Order updated', updateOrder });
   } catch (err) {
-    res.status(404).send(err);
+    res.status(500).send(err);
   }
 };
 
 export const orders_delete = async (req, res) => {
   const id = req.params.orderId;
   const validateObjectId = await mongoose.isValidObjectId(id);
-  if (!validateObjectId) return res.status(404).send('Invalid ID');
+  if (!validateObjectId) return res.status(400).send('Invalid ID');
 
   const orderExist = await Order.findById(id);
   if (!orderExist) return res.status(404).send('Order not found');
 
   try {
     await Order.findById(id).remove();
-    res.status(204).send('Order deleted');
+    res.sendStatus(204);
   } catch (err) {
-    res.status(404).send(err);
+    res.status(500).send(err);
   }
 };
