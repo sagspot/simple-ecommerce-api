@@ -33,6 +33,10 @@ const options = {
   apis: ['./components/*/*.js'],
 };
 
+const customProps = {
+  customCss: '.swagger-ui .topbar { display: none }',
+};
+
 const specs = swaggerJSDoc(options);
 
 mongoose.connect(
@@ -64,7 +68,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs, customProps));
 app.use('/users', userRoute);
 app.use('/products', productRoute);
 app.use('/orders', orderRoute);
