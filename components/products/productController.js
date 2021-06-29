@@ -1,8 +1,11 @@
-const mongoose = require('mongoose');
-const Product = require('./productModel');
-const validate = require('../middlewares/validation');
+import mongoose from 'mongoose';
+import Product from './productModel.js';
+import {
+  createProductValidation,
+  updateProductValidation,
+} from '../middlewares/validation.js';
 
-module.exports.products_get_all = async (req, res) => {
+export const products_get_all = async (req, res) => {
   try {
     const products = await Product.find();
     res.status(200).send(products);
@@ -11,8 +14,8 @@ module.exports.products_get_all = async (req, res) => {
   }
 };
 
-module.exports.products_post_create = async (req, res) => {
-  const { error } = validate.createProductValidation(req.body);
+export const products_post_create = async (req, res) => {
+  const { error } = createProductValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   const newProduct = new Product({
@@ -28,7 +31,7 @@ module.exports.products_post_create = async (req, res) => {
   }
 };
 
-module.exports.products_get_product = async (req, res) => {
+export const products_get_product = async (req, res) => {
   const id = req.params.productId;
   const validateObjectId = await mongoose.isValidObjectId(id);
   if (!validateObjectId) return res.status(404).send('Invalid ID');
@@ -43,8 +46,8 @@ module.exports.products_get_product = async (req, res) => {
   }
 };
 
-module.exports.products_patch_product = async (req, res) => {
-  const { error } = validate.updateProductValidation(req.body);
+export const products_patch_product = async (req, res) => {
+  const { error } = updateProductValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   const id = req.params.productId;
@@ -71,7 +74,7 @@ module.exports.products_patch_product = async (req, res) => {
   }
 };
 
-module.exports.products_delete_product = async (req, res) => {
+export const products_delete_product = async (req, res) => {
   const id = req.params.productId;
   const validateObjectId = await mongoose.isValidObjectId(id);
   if (!validateObjectId) return res.status(404).send('Invalid ID');

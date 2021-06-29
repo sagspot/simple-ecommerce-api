@@ -1,12 +1,39 @@
-const path = require('path');
-const express = require('express');
-const dotenve = require('dotenv').config();
-const morgan = require('morgan');
-const mongoose = require('mongoose');
+import express from 'express';
+import dotenv from 'dotenv';
+import morgan from 'morgan';
+import mongoose from 'mongoose';
+import swaggerUI from 'swagger-ui-express';
+import swaggerJSDoc from 'swagger-jsdoc';
 
-const userRoute = require('./components/users/users');
-const productRoute = require('./components/products/products');
-const orderRoute = require('./components/orders/orders');
+import userRoute from './components/users/users.js';
+import productRoute from './components/products/products.js';
+import orderRoute from './components/orders/orders.js';
+
+dotenv.config();
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'E-commerce solution',
+      version: '1.0.0',
+      description: 'Simple E-Commerce API for an ecommerce website',
+    },
+    servers: [
+      {
+        description: 'Dev server',
+        url: 'http://localhost:5000',
+      },
+      {
+        description: 'Prod server',
+        url: 'https://sagspot-shop.herokuapp.com',
+      },
+    ],
+  },
+  apis: ['./components/*/*.js'],
+};
+
+const specs = swaggerJSDoc(options);
 
 mongoose.connect(
   process.env.MONGO_DB_URL,
@@ -37,8 +64,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
-
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
 app.use('/users', userRoute);
 app.use('/products', productRoute);
 app.use('/orders', orderRoute);

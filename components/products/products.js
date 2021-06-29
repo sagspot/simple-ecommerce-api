@@ -1,19 +1,20 @@
-const router = require('express').Router();
-const productsController = require('./productController');
-const checkAuth = require('../middlewares/auth');
+import express from 'express';
 
-router.get('/', productsController.products_get_all);
-router.post('/', checkAuth, productsController.products_post_create); // add checkAuth
-router.get('/:productId', productsController.products_get_product);
-router.patch(
-  '/:productId',
-  checkAuth,
-  productsController.products_patch_product
-);
-router.delete(
-  '/:productId',
-  checkAuth,
-  productsController.products_delete_product
-);
+import {
+  products_get_all,
+  products_post_create,
+  products_get_product,
+  products_patch_product,
+  products_delete_product,
+} from './productController.js';
+import checkAuth from '../middlewares/auth.js';
 
-module.exports = router;
+const router = express.Router();
+
+router.get('/', products_get_all);
+router.post('/', checkAuth, products_post_create); // add checkAuth
+router.get('/:productId', products_get_product);
+router.patch('/:productId', checkAuth, products_patch_product);
+router.delete('/:productId', checkAuth, products_delete_product);
+
+export default router;

@@ -1,6 +1,6 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
-module.exports.registerValidation = (data) => {
+export const registerValidation = (data) => {
   const schema = Joi.object({
     name: Joi.string().min(3).max(255).required(),
     email: Joi.string().email().required(),
@@ -11,7 +11,7 @@ module.exports.registerValidation = (data) => {
   return schema.validate(data);
 };
 
-module.exports.loginValidation = (data) => {
+export const loginValidation = (data) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().required(),
@@ -20,7 +20,7 @@ module.exports.loginValidation = (data) => {
   return schema.validate(data);
 };
 
-module.exports.createProductValidation = (data) => {
+export const createProductValidation = (data) => {
   const schema = Joi.object({
     name: Joi.string().required(),
     price: Joi.number().required(),
@@ -29,7 +29,7 @@ module.exports.createProductValidation = (data) => {
   return schema.validate(data);
 };
 
-module.exports.updateProductValidation = (data) => {
+export const updateProductValidation = (data) => {
   const schema = Joi.object({
     name: Joi.string(),
     price: Joi.number(),
@@ -38,7 +38,7 @@ module.exports.updateProductValidation = (data) => {
   return schema.validate(data);
 };
 
-module.exports.createOrderValidation = (data) => {
+export const createOrderValidation = (data) => {
   const schema = Joi.object({
     product: Joi.required(),
     quantity: Joi.number(),
@@ -47,7 +47,7 @@ module.exports.createOrderValidation = (data) => {
   return schema.validate(data);
 };
 
-module.exports.updateOrderValidation = (data) => {
+export const updateOrderValidation = (data) => {
   const schema = Joi.object({
     quantity: Joi.number().required(),
   });
