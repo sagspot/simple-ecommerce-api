@@ -34,7 +34,7 @@ export const products_post_create = async (req, res) => {
 export const products_get_product = async (req, res) => {
   const id = req.params.productId;
   const validateObjectId = await mongoose.isValidObjectId(id);
-  if (!validateObjectId) return res.status(404).send('Invalid ID');
+  if (!validateObjectId) return res.status(400).send('Invalid ID');
 
   const product = await Product.findById(id);
   if (!product) return res.status(404).send('Product not found');
@@ -42,7 +42,7 @@ export const products_get_product = async (req, res) => {
   try {
     res.status(200).send(product);
   } catch (err) {
-    res.status(404).send(err);
+    res.status(500).send(err);
   }
 };
 
@@ -53,7 +53,7 @@ export const products_patch_product = async (req, res) => {
   const id = req.params.productId;
 
   const validateObjectId = await mongoose.isValidObjectId(id);
-  if (!validateObjectId) return res.status(404).send('Invalid ID');
+  if (!validateObjectId) return res.status(400).send('Invalid ID');
 
   const product = await Product.findById(id);
   if (!product) return res.status(404).send('Product not found');
@@ -77,15 +77,15 @@ export const products_patch_product = async (req, res) => {
 export const products_delete_product = async (req, res) => {
   const id = req.params.productId;
   const validateObjectId = await mongoose.isValidObjectId(id);
-  if (!validateObjectId) return res.status(404).send('Invalid ID');
+  if (!validateObjectId) return res.status(400).send('Invalid ID');
 
   const product = await Product.findById(id);
   if (!product) return res.status(404).send('Product not found');
 
   try {
     await Product.findById(id).remove();
-    res.status(204).send('Product deleted');
+    res.sendStatus(204);
   } catch (err) {
-    res.status(404).send(err);
+    res.status(500).send(err);
   }
 };
