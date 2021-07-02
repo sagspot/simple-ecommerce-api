@@ -34,11 +34,18 @@ export const users_post_register = async (req, res) => {
 
   try {
     const savedUser = await newUser.save();
-    res.status(200).json({
-      user: savedUser._id,
-      username: savedUser.name,
+
+    const loggedUser = {
+      id: savedUser._id,
+      name: savedUser.name,
       email: savedUser.email,
+    };
+
+    const token = jwt.sign(loggedUser, process.env.JWT_SECRET, {
+      expiresIn: '1h',
     });
+
+    res.status(200).json({ user: loggedUser, token });
   } catch (err) {
     res.status(400).send(err);
   }
