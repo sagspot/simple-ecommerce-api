@@ -1,9 +1,13 @@
-const mongoose = require('mongoose');
-const Order = require('./orderModel');
-const Product = require('../products/productModel');
-const validate = require('../middlewares/validation');
+import mongoose from 'mongoose';
 
-module.exports.orders_get_all = async (req, res) => {
+import Order from './orderModel.js';
+import Product from '../products/productModel.js';
+import {
+  createOrderValidation,
+  updateOrderValidation,
+} from '../middlewares/validation.js';
+
+export const orders_get_all = async (req, res) => {
   try {
     const orders = await Order.find().populate('product', 'name price');
     res.status(200).send(orders);
@@ -12,8 +16,8 @@ module.exports.orders_get_all = async (req, res) => {
   }
 };
 
-module.exports.orders_post_create = async (req, res) => {
-  const { error } = validate.createOrderValidation(req.body);
+export const orders_post_create = async (req, res) => {
+  const { error } = createOrderValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   const validateObjectId = await mongoose.isValidObjectId(req.body.product);
@@ -31,14 +35,14 @@ module.exports.orders_post_create = async (req, res) => {
     const savedOrder = await newOrder.save();
     res.status(201).send(savedOrder);
   } catch (err) {
-    res.status(404).send(err);
+    res.status(500).send(err);
   }
 };
 
-module.exports.orders_get_order = async (req, res) => {
+export const orders_get_order = async (req, res) => {
   const id = req.params.orderId;
   const validateObjectId = await mongoose.isValidObjectId(id);
-  if (!validateObjectId) res.status(404).send('Invalid ID');
+  if (!validateObjectId) res.status(400).send('Invalid ID');
 
   const order = await Order.findById(id).populate('product');
   if (!order) return res.status(404).send('Order not found');
@@ -46,17 +50,17 @@ module.exports.orders_get_order = async (req, res) => {
   try {
     res.status(200).send(order);
   } catch (err) {
-    res.status(404).send(err);
+    res.status(500).send(err);
   }
 };
 
-module.exports.orders_patch_order = async (req, res) => {
-  const { error } = validate.updateOrderValidation(req.body);
+export const orders_patch_order = async (req, res) => {
+  const { error } = updateOrderValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   const id = req.params.orderId;
   const validateObjectId = await mongoose.isValidObjectId(id);
-  if (!validateObjectId) return res.status(404).send('Invalid ID');
+  if (!validateObjectId) return res.status(400).send('Invalid ID');
 
   const orderExist = await Order.findById(id);
   if (!orderExist) return res.status(404).send('Order not found');
@@ -72,22 +76,22 @@ module.exports.orders_patch_order = async (req, res) => {
     );
     res.status(200).json({ message: 'Order updated', updateOrder });
   } catch (err) {
-    res.status(404).send(err);
+    res.status(500).send(err);
   }
 };
 
-module.exports.orders_delete = async (req, res) => {
+export const orders_delete = async (req, res) => {
   const id = req.params.orderId;
   const validateObjectId = await mongoose.isValidObjectId(id);
-  if (!validateObjectId) return res.status(404).send('Invalid ID');
+  if (!validateObjectId) return res.status(400).send('Invalid ID');
 
   const orderExist = await Order.findById(id);
   if (!orderExist) return res.status(404).send('Order not found');
 
   try {
     await Order.findById(id).remove();
-    res.status(204).send('Order deleted');
+    res.sendStatus(204);
   } catch (err) {
-    res.status(404).send(err);
+    res.status(500).send(err);
   }
 };

@@ -1,17 +1,24 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('./userModel');
-const validate = require('../middlewares/validation');
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
-module.exports.users_get_all = (req, res) => {
-  User.find()
-    .then((docs) => res.status(200).send(docs))
-    .catch((err) => res.status(500).send(err));
+import User from './userModel.js';
+import {
+  registerValidation,
+  loginValidation,
+} from '../middlewares/validation.js';
+
+export const users_get_all = async (req, res) => {
+  try {
+    const users = await User.find({}, { password: 0 });
+    res.status(200).send(users);
+  } catch (err) {
+    res.status(500).send(err);
+  }
 };
 
-module.exports.users_post_register = async (req, res) => {
-  const { error } = validate.registerValidation(req.body);
+export const users_post_register = async (req, res) => {
+  const { error } = registerValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   const user = await User.findOne({ email: req.body.email });
@@ -27,18 +34,25 @@ module.exports.users_post_register = async (req, res) => {
 
   try {
     const savedUser = await newUser.save();
-    res.status(200).json({
-      user: savedUser._id,
-      username: savedUser.name,
+
+    const loggedUser = {
+      id: savedUser._id,
+      name: savedUser.name,
       email: savedUser.email,
+    };
+
+    const token = jwt.sign(loggedUser, process.env.JWT_SECRET, {
+      expiresIn: '1h',
     });
+
+    res.status(200).json({ user: loggedUser, token });
   } catch (err) {
     res.status(400).send(err);
   }
 };
 
-module.exports.users_post_login = async (req, res) => {
-  const { error } = validate.loginValidation(req.body);
+export const users_post_login = async (req, res) => {
+  const { error } = loginValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   const user = await User.findOne({ email: req.body.email });
@@ -49,7 +63,7 @@ module.exports.users_post_login = async (req, res) => {
     user.password
   );
 
-  if (!validPassword) return res.status(400).send('Authentication failed');
+  if (!validPassword) return res.status(409).send('Authentication failed');
 
   try {
     const token = jwt.sign(
@@ -63,7 +77,7 @@ module.exports.users_post_login = async (req, res) => {
   }
 };
 
-module.exports.users_delete = async (req, res) => {
+export const users_delete = async (req, res) => {
   const user = await User.findOne({ _id: req.userData.id });
   try {
     const removeUser = await user.remove();
