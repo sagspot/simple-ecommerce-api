@@ -21,12 +21,12 @@ const options = {
     },
     servers: [
       {
-        description: 'Dev server',
-        url: 'http://localhost:5000',
-      },
-      {
         description: 'Prod server',
         url: 'https://sagspot-shop.herokuapp.com',
+      },
+      {
+        description: 'Dev server',
+        url: 'http://localhost:5000',
       },
     ],
   },
@@ -72,6 +72,7 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs, customProps));
 app.use('/users', userRoute);
 app.use('/products', productRoute);
 app.use('/orders', orderRoute);
+app.get('/', (req, res) => res.redirect('/api-docs'));
 
 app.use((req, res, next) => {
   const error = new Error('Not found');
